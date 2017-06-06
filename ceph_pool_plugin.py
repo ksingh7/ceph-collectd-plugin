@@ -53,7 +53,7 @@ class CephPoolPlugin(base.Base):
         try:
            # osd_pool_cmdline='ceph osd pool stats -f json --cluster ' + self.cluster
            # stats_output = subprocess.check_output(osd_pool_cmdline, shell=True)
-           # cephdf_cmdline='ceph df -f json --cluster ' + self.cluster 
+           # cephdf_cmdline='ceph df -f json --cluster ' + self.cluster
            # df_output = subprocess.check_output(ceph_dfcmdline, shell=True)
 	    stdin, stdout, stderr = os.popen3('ceph osd pool stats -f json')
 	    stats_output = stdout.read()
@@ -78,7 +78,7 @@ class CephPoolPlugin(base.Base):
         for pool in json_stats_data:
             pool_key = "pool-%s" % pool['pool_name']
             data[ceph_cluster][pool_key] = {}
-            pool_data = data[ceph_cluster][pool_key] 
+            pool_data = data[ceph_cluster][pool_key]
             for stat in ('read_bytes_sec','write_bytes_sec','read_op_per_sec','write_op_per_sec'):
                 pool_data[stat] = pool['client_io_rate'][stat] if pool['client_io_rate'].has_key(stat) else 0
 
@@ -112,11 +112,10 @@ except Exception as exc:
 def configure_callback(conf):
     """Received configuration information"""
     plugin.config_callback(conf)
+    collectd.register_read(read_callback, plugin.interval)
 
 def read_callback():
     """Callback triggerred by collectd on read"""
     plugin.read_callback()
 
 collectd.register_config(configure_callback)
-collectd.register_read(read_callback, plugin.interval)
-

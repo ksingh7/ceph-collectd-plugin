@@ -67,7 +67,7 @@ class CephPGPlugin(base.Base):
                 if not pg_data.has_key(state):
                     pg_data[state] = 0
                 pg_data[state] += 1
-    
+
         # osd perf data
         for osd in json_data['osd_stats']:
             osd_id = "osd-%s" % osd['osd']
@@ -90,11 +90,10 @@ except Exception as exc:
 def configure_callback(conf):
     """Received configuration information"""
     plugin.config_callback(conf)
+    collectd.register_read(read_callback, plugin.interval)
 
 def read_callback():
     """Callback triggerred by collectd on read"""
     plugin.read_callback()
 
 collectd.register_config(configure_callback)
-collectd.register_read(read_callback, plugin.interval)
-
